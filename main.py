@@ -5,6 +5,7 @@ If the word is not in the underlying data, the dictionary tries to display a lik
 '''
 
 import json
+from difflib import get_close_matches
 
 
 def main():
@@ -43,9 +44,34 @@ def lookup_word(word):
         for respond in data[word]:
             print(f"* {respond}")
         print("\b")
-    else:
-        print("Sorry, I could not find your word. Please look at your spelling again.")
+    elif word not in data:
+        if alternate_word(word):
+            pass
+        else:
+            print("Sorry, I could not find your word. Please look at your spelling again.")
     return
+
+
+def alternate_word(word):
+    """A function to search for a alternate word in the dict and propose that to the user"""
+    # define patterns using the keys from the dict
+    patterns = [key for key in data]
+
+    # get the close matches, default list length is 3
+    close_list = get_close_matches(word, patterns)
+
+    # for every word in the list: ask the user if he meant this
+    ask = False
+    for alt in close_list:
+        print(f"Did you mean {alt}?")
+        user_answer = input("Please respond with [y]es or [n]o: ")
+        if user_answer == 'y':
+            ask = True
+            lookup_word(alt)
+            break
+        elif user_answer == 'n':
+            ask = False
+    return ask
 
 
 def continue_question():
