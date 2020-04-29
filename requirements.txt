@@ -1,0 +1,17 @@
+Requirements for the interactive english dictionary for the terminal.
+
+DONE: greet the user and tell what the programm is about
+
+DONE: import json to load the data from the data.json file and store it in a variable
+DONE: ask the user for a word and store it a another variable
+DONE: set the user input variable to lower case to be case insensitive
+
+DONE: look for the user word in the variable with the json data
+DONE: if the word is found: print the definition to the screen
+     (if there is more than one def, print them all --> for loop)
+else: the word is not found
+- try finding a like word in the dictionary
+DONE: - except: there is no word such as the user input: print that out to the user and ask to reconsider the input
+
+DONE: ask if more words should be looked up or if the user wants to quit the dictionary
+
