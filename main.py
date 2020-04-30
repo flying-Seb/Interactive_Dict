@@ -35,15 +35,10 @@ def shout_out_and_load():
 def lookup_word(word):
     """A function to find the user word in the dict"""
 
-    if word in data:
+    if word.lower() in data:
         found_word(word)
-    elif word.lower() in data:
-        print(f"Did you mean {word.lower()}?")
-        ans = input("Please enter [y]es or [n]o: ").lower()
-        if ans == 'y':
-            found_word(word.lower())
-        elif ans == 'n':
-            sorry()
+    elif word.title() in data:
+        found_word(word.title())
     elif word not in data:
         if alternate_word(word):
             pass
