@@ -10,45 +10,61 @@ from difflib import get_close_matches
 
 def main():
     """This is the main function for the program logic"""
-    shout_out()
-    load_data()
+    shout_out_and_load()
     lookup_word(user_input)
     continue_question()
     return
 
 
-def shout_out():
-    """A function to greet the user ans ask for his word"""
+def shout_out_and_load():
+    """A function to greet the user ans ask for his word. Afterwards loading the data.json file into the dict"""
 
     print("Hello there! Thank you for using my english dictionary. " 
           "What word can I look up for you?")
+    # don't convert the user input to lower case yet, first check if it's a noun and in the list
     global user_input
-    user_input = input("Please enter a word: ").lower()
-    return user_input
+    user_input = input("Please enter a word: ")
 
-
-def load_data():
-    """A function to load the dictionary data from data.json"""
     with open("data.json", "r") as file:
         global data
         data = json.load(file)
-    return data
+
+    return user_input, data
 
 
 def lookup_word(word):
     """A function to find the user word in the dict"""
 
     if word in data:
-        print("\b")
-        print("The output of the dictionary is as follows: ")
-        for respond in data[word]:
-            print(f"* {respond}")
-        print("\b")
+        found_word(word)
+    elif word.lower() in data:
+        print(f"Did you mean {word.lower()}?")
+        ans = input("Please enter [y]es or [n]o: ").lower()
+        if ans == 'y':
+            found_word(word.lower())
+        elif ans == 'n':
+            sorry()
     elif word not in data:
         if alternate_word(word):
             pass
         else:
-            print("Sorry, I could not find your word. Please look at your spelling again.")
+            sorry()
+    return
+
+
+def sorry():
+    print("\b")
+    print("Sorry, I could not find your word. Please double check it.")
+    print("\b")
+    return
+
+
+def found_word(word):
+    print("\b")
+    print("The output of the dictionary is as follows: ")
+    for respond in data[word]:
+        print(f"* {respond}")
+    print("\b")
     return
 
 
@@ -77,7 +93,7 @@ def alternate_word(word):
 def continue_question():
     """A function to ask the user whether to continue or quit"""
 
-    answer = input("Do you want to look up another word or do you want to quit?"
+    answer = input("Do you want to look up another word or do you want to quit? "
                    "Please enter [c]ontinue or [q]uit: ")
     print("\b")
     if answer == 'c':

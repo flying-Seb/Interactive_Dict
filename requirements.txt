@@ -9,11 +9,12 @@ DONE: set the user input variable to lower case to be case insensitive
 DONE: look for the user word in the variable with the json data
 DONE: if the word is found: print the definition to the screen
 DONE:     (if there is more than one def, print them all --> for loop)
-else: the word is not found
+           else: the word is not found
 
-*** STILL OPEN - try finding a like word in the dictionary
+DONE: - try finding a like word in the dictionary
 
 DONE: - except: there is no word such as the user input: print that out to the user and ask to reconsider the input
 
 DONE: ask if more words should be looked up or if the user wants to quit the dictionary
 
+All done!
