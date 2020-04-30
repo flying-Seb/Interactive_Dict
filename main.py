@@ -39,6 +39,8 @@ def lookup_word(word):
         found_word(word)
     elif word.title() in data:
         found_word(word.title())
+    elif word.upper() in data:
+        found_word(word.upper())
     elif word not in data:
         if alternate_word(word):
             pass
