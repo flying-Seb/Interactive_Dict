@@ -17,4 +17,8 @@ DONE: - except: there is no word such as the user input: print that out to the u
 
 DONE: ask if more words should be looked up or if the user wants to quit the dictionary
 
+DONE: create mysql database for the dictionary
+DONE: load the json file to the database
+open: change the application in a way that the database is asked for data
+
 All done!
