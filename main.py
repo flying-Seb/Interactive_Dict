@@ -5,6 +5,9 @@ If the word is not in the underlying data, the dictionary tries to display a lik
 '''
 
 import json
+import sqlalchemy
+import pymysql
+import os
 from difflib import get_close_matches
 
 
@@ -24,29 +27,49 @@ def shout_out_and_load():
     # don't convert the user input to lower case yet, first check if it's a noun and in the list
     global user_input
     user_input = input("Please enter a word: ")
-
-    with open("data.json", "r") as file:
-        global data
-        data = json.load(file)
-
-    return user_input, data
+    return user_input
 
 
 def lookup_word(word):
-    """A function to find the user word in the dict"""
 
-    if word.lower() in data:
-        found_word(word)
-    elif word.title() in data:
-        found_word(word.title())
-    elif word.upper() in data:
-        found_word(word.upper())
-    elif word not in data:
-        if alternate_word(word):
-            pass
-        else:
-            sorry()
-    return
+    """A function to find the user word in the database and create the connection with the database"""
+    user = os.environ['USER']
+    pw = os.environ['PW']
+
+    engine = sqlalchemy.create_engine(f'mysql+pymysql://{user}:{pw}@localhost/Dictionary')
+    global connection
+    connection = engine.connect()
+    metadata = sqlalchemy.MetaData()
+    newTable = sqlalchemy.Table('dict', metadata, autoload=True, autoload_with=engine)
+
+
+    def set_query(w):
+        "A function to create the query for the database"
+        query = f'SELECT definition FROM DICT WHERE word="{w}";'
+        result_proxy = connection.execute(query)
+        global result
+        result = result_proxy.fetchall()
+        return result
+
+    set_query(word)
+
+    if len(result) > 0:
+        found_word(result)
+    elif len(result) == 0:
+        title_word = word.title()
+        set_query(title_word)
+        if len(result) > 0:
+            found_word(result)
+        elif len(result) == 0:
+            upper_word = word.upper()
+            set_query(upper_word)
+            if len(result) > 0:
+                found_word(result)
+            elif len(result) == 0:
+                alternate_word(word)
+    else:
+        sorry()
+    return result, connection
 
 
 def sorry():
@@ -56,19 +79,24 @@ def sorry():
     return
 
 
-def found_word(word):
+def found_word(result):
     print("\b")
     print("The output of the dictionary is as follows: ")
-    for respond in data[word]:
+    for respond in result:
+        # get rid of the ,) stuff with regex
         print(f"* {respond}")
     print("\b")
     return
 
 
 def alternate_word(word):
-    """A function to search for a alternate word in the dict and propose that to the user"""
-    # define patterns using the keys from the dict
-    patterns = [key for key in data]
+    """A function to search for an alternate word in the dict database and propose that to the user"""
+
+    # define patterns using the words from the database
+    query = f'SELECT word FROM DICT;'
+    result_proxy = connection.execute(query)
+    global result
+    patterns = result_proxy.fetchall()
 
     # get the close matches, default list length is 3
     close_list = get_close_matches(word, patterns)
@@ -105,5 +133,4 @@ def continue_question():
 
 if __name__ == '__main__':
     main()
-
 
