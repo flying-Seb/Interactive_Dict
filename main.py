@@ -4,7 +4,6 @@ The user should is asked to input a word and gets a definition of that word for 
 If the word is not in the underlying data, the dictionary tries to display a like-wise word.
 '''
 
-import json
 import sqlalchemy
 import pymysql
 import os
@@ -13,13 +12,13 @@ from difflib import get_close_matches
 
 def main():
     """This is the main function for the program logic"""
-    shout_out_and_load()
+    shout_out_input()
     lookup_word(user_input)
     continue_question()
     return
 
 
-def shout_out_and_load():
+def shout_out_input():
     """A function to greet the user ans ask for his word. Afterwards loading the data.json file into the dict"""
 
     print("Hello there! Thank you for using my english dictionary. " 
@@ -31,7 +30,6 @@ def shout_out_and_load():
 
 
 def lookup_word(word):
-
     """A function to find the user word in the database and create the connection with the database"""
     user = os.environ['USER']
     pw = os.environ['PW']
@@ -42,10 +40,9 @@ def lookup_word(word):
     metadata = sqlalchemy.MetaData()
     newTable = sqlalchemy.Table('dict', metadata, autoload=True, autoload_with=engine)
 
-
     def set_query(w):
-        "A function to create the query for the database"
-        query = f'SELECT definition FROM DICT WHERE word="{w}";'
+        """A function to create the query for the database"""
+        query = f'SELECT * FROM DICT WHERE word="{w}";'
         result_proxy = connection.execute(query)
         global result
         result = result_proxy.fetchall()
@@ -84,7 +81,7 @@ def found_word(result):
     print("The output of the dictionary is as follows: ")
     for respond in result:
         # get rid of the ,) stuff with regex
-        print(f"* {respond}")
+        print(f"* {respond[1]}")
     print("\b")
     return
 
