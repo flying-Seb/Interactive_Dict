@@ -10,6 +10,9 @@ import os
 from difflib import get_close_matches
 import tkinter as tk
 
+# setup window for GUI
+window = tk.Tk()
+
 
 def main():
     """This is the main function for the program logic"""
@@ -132,3 +135,4 @@ def continue_question():
 if __name__ == '__main__':
     main()
 
+window.mainloop()
